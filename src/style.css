@@ -1,0 +1,384 @@
+:root {
+  --ink: #f6efe0;
+  --gold: #ffd25a;
+  --sea: #0f1830;
+  --panel: rgba(12, 18, 38, 0.86);
+  --red: #e0443c;
+  font-family: 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: radial-gradient(circle at 50% 30%, #1c2a52, var(--sea) 70%);
+  color: var(--ink);
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* JS sets the stage size to the largest 16:9 box that fits. */
+#stage {
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  background: #000;
+}
+
+/* ---------- HUD ---------- */
+#hud {
+  position: absolute;
+  inset: 0 0 auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: max(6px, env(safe-area-inset-top)) 10px 0;
+  pointer-events: none;
+  font-weight: 700;
+  font-size: clamp(11px, 1.6vw, 16px);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+}
+.hud-left,
+.hud-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hud-mid {
+  opacity: 0.85;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.85em;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(10, 14, 30, 0.55);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.score b {
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+}
+.ico {
+  display: inline-block;
+  width: 0.95em;
+  height: 0.95em;
+}
+.ico.coin {
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff2a0, var(--gold) 45%, #b8781a);
+  box-shadow: inset 0 0 0 1px #8a5a10;
+}
+.ico.life {
+  background: linear-gradient(#2a1d1a 0 40%, #e8b84a 40% 50%, #f1c28f 50%);
+  clip-path: polygon(0 30%, 50% 0, 100% 30%, 85% 100%, 15% 100%);
+}
+.hearts {
+  display: inline-flex;
+  gap: 3px;
+}
+.heart {
+  width: 1.1em;
+  height: 1em;
+  background: var(--red);
+  clip-path: polygon(50% 100%, 0 40%, 8% 10%, 30% 0, 50% 18%, 70% 0, 92% 10%, 100% 40%);
+}
+.heart.empty {
+  background: rgba(255, 255, 255, 0.18);
+}
+.icon-btn {
+  pointer-events: auto;
+  border: 0;
+  border-radius: 8px;
+  width: 2em;
+  height: 2em;
+  background: rgba(10, 14, 30, 0.55);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9em;
+  cursor: pointer;
+}
+.icon-btn.off {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+
+#bossbar {
+  position: absolute;
+  top: 13%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(50%, 360px);
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(10px, 1.4vw, 14px);
+  text-shadow: 0 2px 0 #000;
+  pointer-events: none;
+}
+#bossbar .bar {
+  margin-top: 3px;
+  height: 8px;
+  border: 2px solid #1a1220;
+  background: #2a1838;
+  border-radius: 4px;
+  overflow: hidden;
+}
+#bossbar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(#e070ff, #8a3ac8);
+  transition: width 0.2s;
+}
+
+.sign {
+  position: absolute;
+  left: 50%;
+  bottom: 9%;
+  transform: translateX(-50%);
+  max-width: min(80%, 560px);
+  background: #f3e2bc;
+  color: #3a2414;
+  border: 3px solid #8a5a32;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: 700;
+  font-size: clamp(11px, 1.6vw, 16px);
+  text-align: center;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+/* ---------- overlays ---------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(6, 10, 24, 0.55);
+  padding: 12px;
+}
+.overlay.show {
+  display: flex;
+}
+.overlay.clear {
+  background: transparent;
+  pointer-events: none;
+}
+.card {
+  background: var(--panel);
+  border: 2px solid rgba(255, 210, 90, 0.4);
+  border-radius: 12px;
+  padding: clamp(10px, 2.5vw, 24px) clamp(14px, 3.5vw, 36px);
+  text-align: center;
+  max-width: 560px;
+  max-height: 100%;
+  overflow: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.card h1 {
+  margin: 0;
+  font-size: clamp(26px, 6vw, 54px);
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  text-shadow: 0 3px 0 #7a3a10, 0 6px 14px rgba(0, 0, 0, 0.5);
+}
+.card h2 {
+  margin: 0 0 4px;
+  font-size: clamp(18px, 3.6vw, 32px);
+  color: var(--gold);
+}
+.card .sub {
+  margin: 4px 0 12px;
+  opacity: 0.85;
+  font-size: clamp(12px, 1.8vw, 16px);
+}
+.card table {
+  margin: 6px auto 12px;
+  border-collapse: collapse;
+  font-size: clamp(11px, 1.7vw, 15px);
+}
+.card td {
+  padding: 2px 10px;
+  text-align: left;
+}
+.card td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.card tr.total td {
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  color: var(--gold);
+  font-weight: 700;
+}
+.controls-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 3px 14px;
+  justify-content: center;
+  margin: 6px 0 14px;
+  font-size: clamp(11px, 1.6vw, 14px);
+  text-align: left;
+}
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0 5px;
+  border-radius: 4px;
+  background: #f3e2bc;
+  color: #3a2414;
+  font: 700 0.85em monospace;
+  text-align: center;
+  box-shadow: 0 2px 0 #8a5a32;
+  margin: 0 1px;
+}
+.btn {
+  display: inline-block;
+  margin: 4px;
+  padding: 9px 22px;
+  border: 0;
+  border-radius: 999px;
+  font: 700 clamp(13px, 2vw, 17px) inherit;
+  font-family: inherit;
+  background: linear-gradient(#ffe27a, #e8a930);
+  color: #3a2008;
+  box-shadow: 0 4px 0 #8a5a10;
+  cursor: pointer;
+}
+.btn.secondary {
+  background: linear-gradient(#e8eef8, #a8b4c8);
+  box-shadow: 0 4px 0 #56627a;
+}
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #8a5a10;
+}
+.fine {
+  margin-top: 10px;
+  font-size: 11px;
+  opacity: 0.6;
+}
+.level-card {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.6);
+}
+.level-card .num {
+  font-size: clamp(12px, 2vw, 18px);
+  letter-spacing: 0.3em;
+  opacity: 0.85;
+}
+
+/* ---------- touch controls ---------- */
+#touch {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+  pointer-events: none;
+  z-index: 5;
+}
+body.touch #touch {
+  display: flex;
+}
+.cluster {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+  pointer-events: auto;
+  touch-action: none;
+}
+.tbtn {
+  width: clamp(56px, 15vmin, 84px);
+  height: clamp(56px, 15vmin, 84px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.16);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 800;
+  font-size: clamp(11px, 3vmin, 15px);
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(2px);
+}
+.tbtn.big {
+  width: clamp(66px, 18vmin, 96px);
+  height: clamp(66px, 18vmin, 96px);
+  background: rgba(255, 210, 90, 0.28);
+}
+.tbtn.small {
+  width: clamp(48px, 13vmin, 70px);
+  height: clamp(48px, 13vmin, 70px);
+  font-size: clamp(9px, 2.4vmin, 12px);
+  background: rgba(120, 200, 255, 0.22);
+  margin-bottom: clamp(40px, 12vmin, 70px);
+}
+.cluster.left .tbtn {
+  font-size: clamp(18px, 5vmin, 26px);
+}
+.tbtn.held {
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(0.94);
+}
+
+/* Phones held upright: the game is small, so cards cover the whole screen
+   instead of just the stage. */
+@media (orientation: portrait) {
+  body.touch .overlay {
+    position: fixed;
+    z-index: 10;
+  }
+  body.touch .overlay.clear {
+    position: absolute;
+  }
+  body.touch .hud-mid {
+    display: none;
+  }
+  body.touch #hud {
+    padding-top: 4px;
+    font-size: 11px;
+    gap: 4px;
+  }
+  body.touch .hud-left,
+  body.touch .hud-right {
+    gap: 4px;
+  }
+  body.touch .sign {
+    position: fixed;
+    bottom: auto;
+    top: calc(var(--stage-bottom, 40vh) + 12px);
+  }
+}

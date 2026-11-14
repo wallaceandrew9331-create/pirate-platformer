@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0f1830" />
+    <meta name="description" content="Brinebound: an original pirate platformer for the browser. Run, jump, slash and parry across three islands to the hidden hoard." />
+    <meta property="og:title" content="Brinebound" />
+    <meta property="og:description" content="Run, jump, slash and parry your way to the treasure. Three levels, four kinds of foe, one very angry captain." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <title>Brinebound</title>
+  </head>
+  <body>
+    <div id="app">
+      <div id="stage">
+        <canvas id="game" aria-label="Game"></canvas>
+        <div id="hud" aria-live="off">
+          <div class="hud-left">
+            <span id="hearts" class="hearts" title="Hearts"></span>
+            <span class="pill" title="Lives"><i class="ico life"></i>×<b id="lives">3</b></span>
+            <span class="pill" title="Doubloons (100 = extra life)"><i class="ico coin"></i><b id="coins">0</b></span>
+          </div>
+          <div class="hud-mid" id="level-name"></div>
+          <div class="hud-right">
+            <span class="pill score" title="Score"><b id="score">0</b></span>
+            <button class="icon-btn" id="mute" aria-label="Mute" title="Mute (M)">♪</button>
+            <button class="icon-btn" id="pause" aria-label="Pause" title="Pause (Esc)">❚❚</button>
+          </div>
+        </div>
+        <div id="bossbar" hidden><span>Captain Grimtide</span><div class="bar"><i id="boss-hp"></i></div></div>
+        <div id="sign" class="sign" hidden></div>
+        <div id="overlay" class="overlay"></div>
+      </div>
+      <div id="touch" aria-hidden="true">
+        <div class="cluster left">
+          <div class="tbtn" data-btn="left">◀</div>
+          <div class="tbtn" data-btn="right">▶</div>
+        </div>
+        <div class="cluster right">
+          <div class="tbtn small" data-btn="parry">PARRY</div>
+          <div class="tbtn" data-btn="slash">SLASH</div>
+          <div class="tbtn big" data-btn="jump">JUMP</div>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
