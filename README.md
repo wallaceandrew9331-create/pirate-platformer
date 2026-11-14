@@ -2,7 +2,7 @@
 
 [![ci](https://github.com/wallaceandrew9331-create/pirate-platformer/actions/workflows/ci.yml/badge.svg)](https://github.com/wallaceandrew9331-create/pirate-platformer/actions/workflows/ci.yml)
 
-**[▶ Play it in your browser](https://wallaceandrew9331-create.github.io/pirate-platformer/)** _(placeholder: live once the Pages workflow has run)_. Works on desktop, with a gamepad, and on phones.
+**[▶ Play it in your browser](https://wallaceandrew9331-create.github.io/pirate-platformer/)**. Works on desktop, with a gamepad, and on phones.
 
 An original pirate side-scroller. Run, jump and fight your way across three islands to the treasure at the bottom of Skullrock Hold. Each enemy needs a different answer: stomp the deckhands, dodge the parrots, parry the cannonballs back where they came from, and get behind the shielded brutes. At the end, Captain Grimtide is waiting.
 
